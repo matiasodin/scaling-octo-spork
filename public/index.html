@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Voice Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <img src="logo.png" id="logo" alt="Minecraft Voice Chat Logo">
+        <h1>🎙️ Minecraft Voice Chat</h1>
+        <div id="user-count-display">Usuarios conectados: 0</div>
+
+        <div id="login-screen">
+            <input type="text" id="username" placeholder="Ingresa tu Gamertag exacto">
+            <button id="join-btn">Unirse</button>
+        </div>
+
+        <div id="status-screen" class="hidden">
+            <p>Conectado como: <span id="display-name">...</span></p>
+            <div class="indicator">
+                <div id="mic-status" class="status-dot"></div> Micrófono
+            </div>
+            <div class="indicator">
+                <div id="connection-status" class="status-dot"></div> Servidor
+            </div>
+
+            <h3>Jugadores Cercanos:</h3>
+            <ul id="players-list">
+                <!-- Players will appear here -->
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
