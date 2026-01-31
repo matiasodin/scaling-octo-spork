@@ -39,8 +39,11 @@ const calculateDistance = (p1, p2) => {
 };
 
 // Handle player updates from Minecraft Addon
+// Event Queue for notifications
+const eventQueue = []; // { text: string, timestamp: number }
+
 app.post('/api/player-update', (req, res) => {
-    const { player, x, y, z, dimension, mute, channel, mutedPlayers } = req.body;
+    const { player, x, y, z, dimension, mute, channel, mutedPlayers, lastEventTime } = req.body;
 
     if (!player) return res.status(400).send('Missing player name');
 
@@ -64,7 +67,16 @@ app.post('/api/player-update', (req, res) => {
         }
     }
 
-    res.json({ speaking: speakingPlayers });
+    // Get new events for this player
+    const clientLastTime = lastEventTime || 0;
+    const newEvents = eventQueue.filter(e => e.timestamp > clientLastTime);
+
+    // Cleanup old events (older than 30 seconds)
+    if (eventQueue.length > 0 && eventQueue[0].timestamp < now - 30000) {
+        eventQueue.shift();
+    }
+
+    res.json({ speaking: speakingPlayers, events: newEvents });
 });
 
 let serverMute = false;
@@ -160,6 +172,12 @@ io.on('connection', (socket) => {
 
         // Broadcast user count
         io.emit('user-count', Object.keys(playerSockets).length);
+
+        // Add to event queue for Minecraft Chat
+        eventQueue.push({
+            text: `§e[VoiceChat] §b${playerName} §aconectado.`,
+            timestamp: Date.now()
+        });
     });
 
     // WebRTC Signaling
